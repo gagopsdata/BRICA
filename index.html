@@ -802,8 +802,8 @@ const PRODUCTS = [
   { id:2, name:'Bife Angosto Deposte', price:22600, cat:'novillo' },
   { id:3, name:'Bola de Lomo', price:15900, cat:'novillo' },
   { id:4, name:'Bola de Lomo Feteada', price:16400, cat:'novillo' },
-  { id:5, name:'Carne Molida x 5kg', price:48500, cat:'novillo', unit:'bolsa 5 kg' },
-  { id:6, name:'Carne Molida x kg', price:9700, cat:'novillo', unit:'por kg' },
+  { id:5, name:'Carne Molida x 5kg', price:48500, cat:'novillo', unit:'bolsa 5 kg', onlyKg:true },
+  { id:6, name:'Carne Molida x kg', price:9700, cat:'novillo', unit:'por kg', onlyKg:true },
   { id:7, name:'Colita de Cuadril', price:17300, cat:'novillo' },
   { id:8, name:'Corazón de Cuadril', price:15900, cat:'novillo' },
   { id:9, name:'Corazón de Cuadril Feteado', price:16400, cat:'novillo' },
@@ -840,8 +840,8 @@ const PRODUCTS = [
   { id:39, name:'Carre C/Hueso', price:6900, cat:'cerdo' },
   { id:40, name:'Churrasquito', price:9600, cat:'cerdo' },
   { id:41, name:'Matambre de Cerdo', price:19700, cat:'cerdo' },
-  { id:42, name:'Carne Molida de Cerdo', price:6500, cat:'cerdo', unit:'por kg' },
-  { id:43, name:'Carne Molida de Cerdo x 3kg', price:18000, cat:'cerdo', unit:'bolsa 3 kg' },
+  { id:42, name:'Carne Molida de Cerdo', price:6500, cat:'cerdo', unit:'por kg', onlyKg:true },
+  { id:43, name:'Carne Molida de Cerdo x 3kg', price:18000, cat:'cerdo', unit:'bolsa 3 kg', onlyKg:true },
   { id:44, name:'Pechito C/Manto', price:8000, cat:'cerdo' },
   { id:45, name:'Pechito S/Manto', price:7900, cat:'cerdo' },
   { id:46, name:'Solomillo', price:0, cat:'cerdo', noPrice:true },
@@ -925,7 +925,7 @@ function renderProducts() {
       const unit = getCardUnit(p.id);
       const hasPrice = !p.noPrice && p.price > 0;
       // fixed-unit products (e.g. pollo ya tiene caja definida)
-      const fixedUnit = p.unit && (p.unit.includes('caja') || p.unit.includes('bolsa'));
+      const fixedUnit = p.onlyKg || (p.unit && (p.unit.includes('caja') || p.unit.includes('bolsa')));
 
       const priceDisplay = unit === 'caja'
         ? formatPrice(p.price * CAJA_KG) + ' / caja'
