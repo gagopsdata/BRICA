@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BRICA – Distribución y Servicios</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --rojo: #c0392b;
+    --rojo-dark: #96281b;
+    --crema: #fdf6ec;
+    --cafe: #3d1f0d;
+    --gris: #5a5a5a;
+    --borde: #e8ddd0;
+    --sombra: rgba(61,31,13,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--crema);
+    color: var(--cafe);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--cafe);
+    color: white;
+    padding: 0 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: 1rem;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .logo span { color: var(--rojo); }
+
+  .search-bar {
+    flex: 1;
+    max-width: 420px;
+    position: relative;
+  }
+  .search-bar input {
+    width: 100%;
+    padding: 0.5rem 1rem 0.5rem 2.6rem;
+    border-radius: 4px;
+    border: none;
+    background: rgba(255,255,255,0.12);
+    color: white;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: background .2s;
+  }
+  .search-bar input::placeholder { color: rgba(255,255,255,0.5); }
+  .search-bar input:focus { background: rgba(255,255,255,0.22); }
+  .search-bar svg {
+    position: absolute;
+    left: 0.7rem;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+  }
+
+  .cart-btn {
+    background: var(--rojo);
+    border: none;
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.05rem;
+    letter-spacing: 1.5px;
+    padding: 0.55rem 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    transition: background .15s;
+    position: relative;
+  }
+  .cart-btn:hover { background: var(--rojo-dark); }
+  .cart-count {
+    background: white;
+    color: var(--rojo);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+  }
+
+  /* INFO BAR */
+  .info-bar {
+    background: var(--rojo);
+    color: white;
+    font-size: 0.78rem;
+    text-align: center;
+    padding: 0.4rem 1rem;
+    letter-spacing: 0.5px;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+  .info-bar span { display: flex; align-items: center; gap: 0.3rem; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--cafe) 60%, #5a2d14 100%);
+    color: white;
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    letter-spacing: 4px;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 em { color: var(--rojo); font-style: normal; }
+  .hero p { font-size: 1rem; opacity: 0.75; font-weight: 300; }
+
+  /* CATEGORY TABS */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.5rem 1rem 0.5rem;
+    flex-wrap: wrap;
+  }
+  .tab {
+    background: white;
+    border: 2px solid var(--borde);
+    border-radius: 50px;
+    padding: 0.45rem 1.2rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    color: var(--gris);
+    transition: all .15s;
+  }
+  .tab:hover, .tab.active {
+    background: var(--rojo);
+    border-color: var(--rojo);
+    color: white;
+  }
+
+  /* GRID */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 4rem;
+  }
+
+  .category-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 3px;
+    color: var(--cafe);
+    border-left: 4px solid var(--rojo);
+    padding-left: 0.75rem;
+    margin: 2rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .card {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--borde);
+    padding: 1.1rem 1rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    transition: box-shadow .2s, transform .15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--rojo);
+    transform: scaleX(0);
+    transition: transform .2s;
+    transform-origin: left;
+  }
+  .card:hover { box-shadow: 0 6px 20px var(--sombra); transform: translateY(-2px); }
+  .card:hover::before { transform: scaleX(1); }
+
+  .card-name {
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: var(--cafe);
+    line-height: 1.3;
+    flex: 1;
+  }
+  .card-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: var(--rojo);
+    letter-spacing: 1px;
+  }
+  .card-unit {
+    font-size: 0.72rem;
+    color: var(--gris);
+    margin-top: -4px;
+  }
+
+  .add-btn {
+    margin-top: 0.6rem;
+    background: var(--cafe);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.45rem;
+    cursor: pointer;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    transition: background .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+  }
+  .add-btn:hover { background: var(--rojo); }
+
+  /* QTY CONTROL */
+  .qty-ctrl {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--crema);
+    border-radius: 4px;
+    border: 1px solid var(--borde);
+    margin-top: 0.6rem;
+    overflow: hidden;
+  }
+  .qty-ctrl.visible { display: flex; }
+  .qty-ctrl button {
+    background: none;
+    border: none;
+    width: 36px;
+    height: 34px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: var(--cafe);
+    font-weight: 700;
+    transition: background .1s;
+  }
+  .qty-ctrl button:hover { background: var(--borde); }
+  .qty-ctrl span {
+    font-weight: 700;
+    font-size: 0.9rem;
+    min-width: 30px;
+    text-align: center;
+  }
+
+  /* CART PANEL */
+  .cart-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 200;
+  }
+  .cart-overlay.open { display: block; }
+
+  .cart-panel {
+    position: fixed;
+    top: 0; right: -420px;
+    width: 380px;
+    max-width: 95vw;
+    height: 100vh;
+    background: white;
+    z-index: 201;
+    display: flex;
+    flex-direction: column;
+    transition: right .3s cubic-bezier(.4,0,.2,1);
+    box-shadow: -4px 0 30px rgba(0,0,0,0.2);
+  }
+  .cart-panel.open { right: 0; }
+
+  .cart-header {
+    background: var(--cafe);
+    color: white;
+    padding: 1.1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .cart-header h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+  }
+  .close-cart {
+    background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; line-height: 1;
+  }
+
+  .cart-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .cart-item {
+    background: var(--crema);
+    border-radius: 6px;
+    padding: 0.7rem 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    border: 1px solid var(--borde);
+    animation: slideIn .2s ease;
+  }
+  @keyframes slideIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: none; } }
+
+  .ci-info { flex: 1; }
+  .ci-name { font-weight: 700; font-size: 0.82rem; text-transform: uppercase; }
+  .ci-price { font-size: 0.78rem; color: var(--gris); }
+  .ci-qty {
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .ci-qty button {
+    width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--borde);
+    background: white; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center;
+    color: var(--cafe);
+    transition: background .1s;
+  }
+  .ci-qty button:hover { background: var(--rojo); color: white; border-color: var(--rojo); }
+  .ci-qty span { font-weight: 700; font-size: 0.9rem; min-width: 20px; text-align: center; }
+  .ci-total { font-family: 'Bebas Neue', sans-serif; font-size: 1.05rem; color: var(--rojo); white-space: nowrap; }
+
+  .cart-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--gris);
+    font-size: 0.9rem;
+  }
+  .cart-empty .icon { font-size: 3rem; margin-bottom: 0.5rem; }
+
+  .cart-footer {
+    border-top: 2px solid var(--borde);
+    padding: 1rem 1.2rem;
+    background: white;
+  }
+  .cart-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+  }
+  .cart-total-row span { font-weight: 700; font-size: 0.9rem; }
+  .cart-total-row strong { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; color: var(--cafe); }
+
+  .whatsapp-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.85rem;
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background .15s;
+  }
+  .whatsapp-btn:hover { background: #1ebe57; }
+
+  .clear-btn {
+    width: 100%; margin-top: 0.5rem; padding: 0.5rem;
+    background: none; border: 1px solid var(--borde); border-radius: 6px;
+    color: var(--gris); font-family: 'Lato', sans-serif; font-size: 0.82rem;
+    cursor: pointer; transition: all .15s;
+  }
+  .clear-btn:hover { border-color: var(--rojo); color: var(--rojo); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--cafe);
+    color: white;
+    padding: 0.6rem 1.4rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    z-index: 300;
+    transition: transform .3s;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* VIGENCIA */
+  .vigencia {
+    text-align: center;
+    color: var(--gris);
+    font-size: 0.75rem;
+    padding-bottom: 1rem;
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--gris);
+    font-size: 0.95rem;
+    display: none;
+  }
+  .no-results.visible { display: block; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 2.2rem; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); }
+    .info-bar { gap: 0.8rem; font-size: 0.7rem; }
+  }
+
+
+  /* UNIT SELECTOR */
+  .unit-selector {
+    display: flex;
+    gap: 0.3rem;
+    margin-top: 0.5rem;
+  }
+  .unit-btn {
+    flex: 1;
+    padding: 0.3rem 0.2rem;
+    border: 1.5px solid var(--borde);
+    border-radius: 4px;
+    background: white;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--gris);
+    cursor: pointer;
+    transition: all .15s;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .unit-btn.active {
+    background: var(--cafe);
+    border-color: var(--cafe);
+    color: white;
+  }
+  .card-price-kg {
+    font-size: 0.7rem;
+    color: var(--gris);
+    margin-top: -2px;
+    font-style: italic;
+  }
+  .card-price-calc {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: var(--rojo);
+    letter-spacing: 1px;
+    min-height: 1.6rem;
+  }
+  .caja-kg-note {
+    font-size: 0.68rem;
+    color: var(--gris);
+    margin-top: -3px;
+  }
+
+  /* WP FLOTANTE */
+  .wp-float {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: 150;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-decoration: none;
+    animation: wpBounce 2.5s ease-in-out infinite;
+  }
+  @keyframes wpBounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .wp-float-bubble {
+    background: white;
+    color: #128C7E;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.4rem 0.75rem;
+    border-radius: 50px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.18);
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: opacity .25s, transform .25s;
+    pointer-events: none;
+  }
+  .wp-float:hover .wp-float-bubble { opacity: 1; transform: translateX(0); }
+  .wp-float-icon {
+    width: 56px; height: 56px;
+    background: #25D366;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 16px rgba(37,211,102,0.5);
+    transition: transform .15s, box-shadow .15s;
+    flex-shrink: 0;
+  }
+  .wp-float:hover .wp-float-icon { transform: scale(1.08); box-shadow: 0 6px 22px rgba(37,211,102,0.65); }
+  .wp-float-icon svg { width: 30px; height: 30px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="cursor:pointer" title="Ir al inicio">B<span>R</span>ICA</div>
+  <div class="search-bar">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="searchInput" placeholder="Buscar producto..." oninput="filterProducts()">
+  </div>
+  <button class="cart-btn" onclick="toggleCart()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+    Pedido
+    <span class="cart-count" id="cartCount">0</span>
+  </button>
+</header>
+
+<!-- INFO BAR -->
+<div class="info-bar">
+  <span>📞 3227823 / 3815549874</span>
+  <span>🚚 Envío a domicilio sin cargo</span>
+  <span>🕐 7hs – 18hs</span>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>CARNES <em>BRICA</em></h1>
+  <p>Distribución y Servicios · Tucumán · Precios al 25/03/2026</p>
+  <div style="margin-top:0.9rem;display:flex;flex-wrap:wrap;justify-content:center;gap:0.5rem;">
+    <span style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:50px;padding:0.35rem 1rem;font-size:0.78rem;letter-spacing:0.3px;">⚖️ Precios por <strong>kilogramo</strong></span>
+    <span style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);border-radius:50px;padding:0.35rem 1rem;font-size:0.78rem;letter-spacing:0.3px;">📦 Podés comprar por <strong>kg o por caja</strong></span>
+    <span style="background:rgba(192,57,43,0.7);border:1px solid rgba(255,255,255,0.2);border-radius:50px;padding:0.35rem 1rem;font-size:0.78rem;letter-spacing:0.3px;">⚠️ El precio final puede variar según el peso exacto en la entrega</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="filterCategory('all', this)">🥩 Todo</button>
+  <button class="tab" onclick="filterCategory('novillo', this)">🐄 Novillo</button>
+  <button class="tab" onclick="filterCategory('cerdo', this)">🐷 Cerdo</button>
+  <button class="tab" onclick="filterCategory('pollo', this)">🍗 Pollo</button>
+</div>
+
+<main>
+  <div id="noResults" class="no-results">No se encontraron productos 🔍</div>
+  <div id="productContainer"></div>
+  <p class="vigencia">★ Precios vigentes desde 25/03/2026 · Consulte disponibilidad · Precios por kg · pueden variar según el peso real a la entrega</p>
+</main>
+
+<!-- CART OVERLAY + PANEL -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <h2>🛒 Tu Pedido</h2>
+    <button class="close-cart" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty"><div class="icon">🛒</div>Tu pedido está vacío.<br>¡Agregá productos!</div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total-row">
+      <span>TOTAL DEL PEDIDO</span>
+      <strong id="cartTotal">$0</strong>
+    </div>
+    <a id="whatsappLink" class="whatsapp-btn" href="#" target="_blank">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+      ENVIAR PEDIDO POR WHATSAPP
+    </a>
+    <button class="clear-btn" onclick="clearCart()">Vaciar pedido</button>
+  </div>
+</div>
+
+
+<!-- WP FLOTANTE -->
+<a class="wp-float" href="https://wa.me/543815549874?text=Hola+BRICA%21+Quisiera+hacer+una+consulta." target="_blank" title="Chateá con nosotros">
+  <span class="wp-float-bubble">¡Chateá con nosotros!</span>
+  <div class="wp-float-icon">
+    <svg viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
+    </svg>
+  </div>
+</a>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const PRODUCTS = [
+  // NOVILLO
+  { id:1, name:'Bife Ancho Deposte', price:23200, cat:'novillo' },
+  { id:2, name:'Bife Angosto Deposte', price:22600, cat:'novillo' },
+  { id:3, name:'Bola de Lomo', price:15900, cat:'novillo' },
+  { id:4, name:'Bola de Lomo Feteada', price:16400, cat:'novillo' },
+  { id:5, name:'Carne Molida x 5kg', price:48500, cat:'novillo', unit:'bolsa 5 kg' },
+  { id:6, name:'Carne Molida x kg', price:9700, cat:'novillo', unit:'por kg' },
+  { id:7, name:'Colita de Cuadril', price:17300, cat:'novillo' },
+  { id:8, name:'Corazón de Cuadril', price:15900, cat:'novillo' },
+  { id:9, name:'Corazón de Cuadril Feteado', price:16400, cat:'novillo' },
+  { id:10, name:'Costilla de Novillo', price:16100, cat:'novillo' },
+  { id:11, name:'Costeleta de Novillo', price:16500, cat:'novillo' },
+  { id:12, name:'Cuadrada Bermejo', price:15900, cat:'novillo' },
+  { id:13, name:'Cuadrada Feteada', price:16400, cat:'novillo' },
+  { id:14, name:'Entraña', price:23500, cat:'novillo' },
+  { id:15, name:'Faldita', price:17700, cat:'novillo' },
+  { id:16, name:'Filet', price:25500, cat:'novillo' },
+  { id:17, name:'Jamón de Paleta', price:15600, cat:'novillo' },
+  { id:18, name:'Grasa Peeya o Molida', price:4900, cat:'novillo' },
+  { id:19, name:'Iron Flat', price:18300, cat:'novillo' },
+  { id:20, name:'Matambre', price:14800, cat:'novillo' },
+  { id:21, name:'Nalga Feteada Bermejo', price:20800, cat:'novillo' },
+  { id:22, name:'Nalga S/Tapa Bermejo', price:19800, cat:'novillo' },
+  { id:23, name:'Paleta Chata', price:14600, cat:'novillo' },
+  { id:24, name:'Paleta Rolliza', price:15500, cat:'novillo' },
+  { id:25, name:'Paleta Rolliza Feteada', price:16100, cat:'novillo' },
+  { id:26, name:'Peceto Bermejo', price:18400, cat:'novillo' },
+  { id:27, name:'Peceto Feteado', price:18900, cat:'novillo' },
+  { id:28, name:'Picana', price:24500, cat:'novillo' },
+  { id:29, name:'Primo', price:14200, cat:'novillo' },
+  { id:30, name:'Puchero Especial', price:10900, cat:'novillo' },
+  { id:31, name:'Queperi', price:14900, cat:'novillo' },
+  { id:32, name:'Recorte', price:13000, cat:'novillo' },
+  { id:33, name:'Tapa de Asado', price:14400, cat:'novillo' },
+  { id:34, name:'Tapa de Nalga', price:15000, cat:'novillo' },
+  { id:35, name:'Vacío', price:18200, cat:'novillo' },
+  // CERDO
+  { id:36, name:'Bondiola', price:8400, cat:'cerdo' },
+  { id:37, name:'Carre Cortado', price:7600, cat:'cerdo' },
+  { id:38, name:'Carre S/Hueso', price:8400, cat:'cerdo' },
+  { id:39, name:'Carre C/Hueso', price:6900, cat:'cerdo' },
+  { id:40, name:'Churrasquito', price:9600, cat:'cerdo' },
+  { id:41, name:'Matambre de Cerdo', price:19700, cat:'cerdo' },
+  { id:42, name:'Carne Molida de Cerdo', price:6500, cat:'cerdo', unit:'por kg' },
+  { id:43, name:'Carne Molida de Cerdo x 3kg', price:18000, cat:'cerdo', unit:'bolsa 3 kg' },
+  { id:44, name:'Pechito C/Manto', price:8000, cat:'cerdo' },
+  { id:45, name:'Pechito S/Manto', price:7900, cat:'cerdo' },
+  { id:46, name:'Solomillo', price:0, cat:'cerdo', noPrice:true },
+  { id:47, name:'Vacío de Cerdo', price:0, cat:'cerdo', noPrice:true },
+  // POLLO
+  { id:48, name:'Pollo Entero x 20kg', price:82500, cat:'pollo', unit:'caja 20 kg' },
+  { id:49, name:'Filet de Pollo x 15kg', price:127500, cat:'pollo', unit:'caja 15 kg' },
+  { id:50, name:'Pata Muslo de Pollo x 15kg', price:55000, cat:'pollo', unit:'caja 15 kg' },
+];
+
+let cart = {};
+let currentCategory = 'all';
+let currentSearch = '';
+
+function formatPrice(n) {
+  return '$ ' + n.toLocaleString('es-AR');
+}
+
+// cardUnit: 'kg' | 'caja'   per product id
+const cardUnit = {};
+
+function getCardUnit(id) { return cardUnit[id] || 'kg'; }
+const CAJA_KG = 20;
+
+function calcPrice(p, unit, qty) {
+  if (unit === 'caja') return p.price * CAJA_KG * qty;
+  return p.price * qty;
+}
+
+function setUnit(id, unit) {
+  cardUnit[id] = unit;
+  // update price display
+  const p = PRODUCTS.find(x=>x.id===id);
+  const qty = cart[id]?.qty || 0;
+  const priceEl = document.getElementById('calcprice-'+id);
+  const noteEl  = document.getElementById('cajanote-'+id);
+  if (priceEl) {
+    if (unit === 'caja') {
+      priceEl.textContent = formatPrice(p.price * CAJA_KG) + ' / caja';
+      if (noteEl) noteEl.textContent = '≈ ' + CAJA_KG + ' kg por caja';
+    } else {
+      priceEl.textContent = formatPrice(p.price) + ' / kg';
+      if (noteEl) noteEl.textContent = '';
+    }
+  }
+  // update active btn
+  ['kg','caja'].forEach(u => {
+    const btn = document.getElementById('ubtn-'+u+'-'+id);
+    if (btn) btn.classList.toggle('active', u===unit);
+  });
+  // if already in cart, update unit and recalculate
+  if (cart[id]) {
+    cart[id].unit = unit;
+    updateCartUI();
+  }
+}
+
+function renderProducts() {
+  const container = document.getElementById('productContainer');
+  const noResults = document.getElementById('noResults');
+  const s = currentSearch.toLowerCase();
+
+  const cats = currentCategory === 'all'
+    ? ['novillo','cerdo','pollo']
+    : [currentCategory];
+
+  const catNames = { novillo:'🐄 Cortes de Novillo', cerdo:'🐷 Cortes de Cerdo', pollo:'🍗 Pollos' };
+
+  let html = '';
+  let total = 0;
+
+  cats.forEach(cat => {
+    const items = PRODUCTS.filter(p =>
+      p.cat === cat && (!s || p.name.toLowerCase().includes(s))
+    );
+    if (!items.length) return;
+    total += items.length;
+    html += `<div class="category-title">${catNames[cat]}</div><div class="grid">`;
+    items.forEach(p => {
+      const qty = cart[p.id]?.qty || 0;
+      const unit = getCardUnit(p.id);
+      const hasPrice = !p.noPrice && p.price > 0;
+      // fixed-unit products (e.g. pollo ya tiene caja definida)
+      const fixedUnit = p.unit && (p.unit.includes('caja') || p.unit.includes('bolsa'));
+
+      const priceDisplay = unit === 'caja'
+        ? formatPrice(p.price * CAJA_KG) + ' / caja'
+        : formatPrice(p.price) + ' / kg';
+      const cajaNote = unit === 'caja' ? '≈ ' + CAJA_KG + ' kg por caja' : '';
+
+      html += `
+        <div class="card" id="card-${p.id}">
+          <div class="card-name">${p.name}</div>
+          ${hasPrice ? `
+            <div class="card-price-kg">Precio por kg: ${formatPrice(p.price)}</div>
+            ${!fixedUnit ? `
+            <div class="unit-selector">
+              <button class="unit-btn ${unit==='kg'?'active':''}" id="ubtn-kg-${p.id}" onclick="setUnit(${p.id},'kg')">⚖️ Kg</button>
+              <button class="unit-btn ${unit==='caja'?'active':''}" id="ubtn-caja-${p.id}" onclick="setUnit(${p.id},'caja')">📦 Caja</button>
+            </div>` : ''}
+            <div class="card-price-calc" id="calcprice-${p.id}">${fixedUnit ? formatPrice(p.price) : priceDisplay}</div>
+            <div class="caja-kg-note" id="cajanote-${p.id}">${fixedUnit ? (p.unit||'') : cajaNote}</div>
+          ` : '<div class="card-price" style="font-size:0.9rem;color:var(--gris)">Consultar</div>'}
+          ${hasPrice ? `
+            <button class="add-btn" id="addbtn-${p.id}" style="display:${qty>0?'none':'flex'}" onclick="addToCart(${p.id})">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Agregar
+            </button>
+            <div class="qty-ctrl ${qty>0?'visible':''}" id="qty-${p.id}">
+              <button onclick="changeQty(${p.id},-1)">−</button>
+              <span id="qtyval-${p.id}">${qty}</span>
+              <button onclick="changeQty(${p.id},1)">+</button>
+            </div>
+          ` : `<button class="add-btn" style="background:var(--gris)" onclick="consultWhatsapp('${p.name}')">Consultar</button>`}
+        </div>`;
+    });
+    html += '</div>';
+  });
+
+  if (!total) {
+    noResults.classList.add('visible');
+    container.innerHTML = '';
+  } else {
+    noResults.classList.remove('visible');
+    container.innerHTML = html;
+  }
+}
+
+function addToCart(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  const unit = getCardUnit(id);
+  cart[id] = { product: p, qty: 1, unit };
+  updateCardUI(id);
+  updateCartUI();
+  const unitLabel = unit === 'caja' ? 'caja' : 'kg';
+  showToast(p.name + ' (' + unitLabel + ') agregado ✓');
+}
+
+function changeQty(id, delta) {
+  const unit = cart[id]?.unit || getCardUnit(id);
+  if (!cart[id]) cart[id] = { product: PRODUCTS.find(x=>x.id===id), qty: 0, unit };
+  cart[id].qty = Math.max(0, cart[id].qty + delta);
+  if (cart[id].qty === 0) delete cart[id];
+  updateCardUI(id);
+  updateCartUI();
+}
+
+function updateCardUI(id) {
+  const qty = cart[id]?.qty || 0;
+  const addBtn = document.getElementById('addbtn-'+id);
+  const qtyCtrl = document.getElementById('qty-'+id);
+  const qtyVal = document.getElementById('qtyval-'+id);
+  if (addBtn) addBtn.style.display = qty > 0 ? 'none' : 'flex';
+  if (qtyCtrl) {
+    qtyCtrl.classList.toggle('visible', qty > 0);
+  }
+  if (qtyVal) qtyVal.textContent = qty;
+}
+
+function itemTotal(item) {
+  const { product: p, qty, unit } = item;
+  if (unit === 'caja') return p.price * CAJA_KG * qty;
+  return p.price * qty;
+}
+
+function updateCartUI() {
+  const items = Object.values(cart);
+  const count = items.reduce((s,i)=>s+i.qty, 0);
+  const total = items.reduce((s,i)=>s+itemTotal(i), 0);
+
+  document.getElementById('cartCount').textContent = count;
+
+  const cartItemsEl = document.getElementById('cartItems');
+  const cartFooter = document.getElementById('cartFooter');
+
+  if (!items.length) {
+    cartItemsEl.innerHTML = '<div class="cart-empty"><div class="icon">🛒</div>Tu pedido está vacío.<br>¡Agregá productos!</div>';
+    cartFooter.style.display = 'none';
+    return;
+  }
+
+  cartFooter.style.display = 'block';
+  document.getElementById('cartTotal').textContent = formatPrice(total);
+
+  let html = '';
+  items.forEach((item) => {
+    const {product:p, qty, unit} = item;
+    const isCaja = unit === 'caja';
+    const lineTotal = itemTotal(item);
+    const unitLabel = isCaja ? `📦 ${qty} caja${qty>1?'s':''} (≈${qty*CAJA_KG} kg)` : `⚖️ ${qty} kg`;
+    const unitPrice = isCaja ? formatPrice(p.price*CAJA_KG)+'/caja' : formatPrice(p.price)+'/kg';
+    html += `
+      <div class="cart-item">
+        <div class="ci-info">
+          <div class="ci-name">${p.name}</div>
+          <div class="ci-price">${unitLabel} · ${unitPrice}</div>
+        </div>
+        <div class="ci-qty">
+          <button onclick="changeQty(${p.id},-1)">−</button>
+          <span>${qty}</span>
+          <button onclick="changeQty(${p.id},1)">+</button>
+        </div>
+        <div class="ci-total">${formatPrice(lineTotal)}</div>
+      </div>`;
+  });
+  cartItemsEl.innerHTML = html;
+
+  // WhatsApp link – unit-aware
+  const lines = items.map((item) => {
+    const {product:p, qty, unit} = item;
+    const isCaja = unit === 'caja';
+    const desc = isCaja
+      ? `• ${p.name} – ${qty} caja${qty>1?'s':''} (~${qty*CAJA_KG}kg) = ${formatPrice(itemTotal(item))}`
+      : `• ${p.name} – ${qty} kg = ${formatPrice(itemTotal(item))}`;
+    return desc;
+  }).join('%0A');
+  const totalLine = `%0A*TOTAL ESTIMADO: ${formatPrice(total)}*%0A_(Puede variar según peso real en entrega)_`;
+  const msg = `Hola BRICA! Quiero hacer el siguiente pedido:%0A%0A${lines}${totalLine}%0A%0APor favor confirmen disponibilidad. Gracias!`;
+  document.getElementById('whatsappLink').href = `https://wa.me/543815549874?text=${msg}`;
+}
+
+function clearCart() {
+  cart = {};
+  renderProducts();
+  updateCartUI();
+}
+
+function toggleCart() {
+  document.getElementById('cartPanel').classList.toggle('open');
+  document.getElementById('cartOverlay').classList.toggle('open');
+}
+
+function filterCategory(cat, el) {
+  currentCategory = cat;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderProducts();
+}
+
+function filterProducts() {
+  currentSearch = document.getElementById('searchInput').value;
+  if (currentSearch) {
+    currentCategory = 'all';
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.tab')[0].classList.add('active');
+  }
+  renderProducts();
+}
+
+function consultWhatsapp(name) {
+  window.open(`https://wa.me/543815549874?text=Hola BRICA! Quisiera consultar el precio de: ${encodeURIComponent(name)}`, '_blank');
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+// INIT
+renderProducts();
+</script>
+
+<!-- FOOTER -->
+<footer style="background:var(--cafe);color:rgba(255,255,255,0.45);text-align:center;padding:1rem;font-size:0.72rem;letter-spacing:0.5px;margin-top:2rem;">
+  © 2026 · Todos los derechos reservados · <strong style="color:rgba(255,255,255,0.7);letter-spacing:1px;">GAGOPSDATA</strong>
+</footer>
+</body>
+</html>
