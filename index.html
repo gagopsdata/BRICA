@@ -506,6 +506,130 @@
     margin-top: -3px;
   }
 
+
+  /* MODAL DATOS CLIENTE */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: white;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    overflow: hidden;
+    animation: modalIn .25s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes modalIn { from { opacity:0; transform: translateY(24px) scale(.97); } to { opacity:1; transform: none; } }
+
+  .modal-header {
+    background: var(--cafe);
+    color: white;
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-header h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+  }
+  .modal-close {
+    background: none; border: none; color: white; font-size: 1.4rem;
+    cursor: pointer; line-height: 1; padding: 0;
+  }
+
+  .modal-body {
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .modal-body p {
+    font-size: 0.82rem;
+    color: var(--gris);
+    margin-bottom: 0.2rem;
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .field-group label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--cafe);
+  }
+  .field-group input, .field-group textarea {
+    padding: 0.6rem 0.8rem;
+    border: 1.5px solid var(--borde);
+    border-radius: 5px;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.88rem;
+    color: var(--cafe);
+    outline: none;
+    transition: border-color .15s;
+    resize: none;
+  }
+  .field-group input:focus, .field-group textarea:focus {
+    border-color: var(--rojo);
+  }
+  .field-group input.error, .field-group textarea.error {
+    border-color: #e74c3c;
+    background: #fff5f5;
+  }
+  .field-error {
+    font-size: 0.7rem;
+    color: #e74c3c;
+    display: none;
+  }
+  .field-error.visible { display: block; }
+
+  .modal-footer {
+    padding: 0 1.2rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .modal-send-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.85rem;
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.15rem;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .modal-send-btn:hover { background: #1ebe57; }
+  .modal-cancel-btn {
+    width: 100%; padding: 0.5rem;
+    background: none; border: 1px solid var(--borde); border-radius: 6px;
+    color: var(--gris); font-family: 'Lato', sans-serif; font-size: 0.82rem;
+    cursor: pointer; transition: all .15s;
+  }
+  .modal-cancel-btn:hover { border-color: var(--rojo); color: var(--rojo); }
+
   /* WP FLOTANTE */
   .wp-float {
     position: fixed;
@@ -613,14 +737,50 @@
       <span>TOTAL DEL PEDIDO</span>
       <strong id="cartTotal">$0</strong>
     </div>
-    <a id="whatsappLink" class="whatsapp-btn" href="#" target="_blank">
+    <button class="whatsapp-btn" onclick="openModal()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
       ENVIAR PEDIDO POR WHATSAPP
-    </a>
+    </button>
     <button class="clear-btn" onclick="clearCart()">Vaciar pedido</button>
   </div>
 </div>
 
+
+
+<!-- MODAL DATOS CLIENTE -->
+<div class="modal-overlay" id="clientModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📋 Datos de entrega</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>Completá tus datos para que BRICA pueda coordinar la entrega.</p>
+      <div class="field-group">
+        <label>Nombre completo *</label>
+        <input type="text" id="clientName" placeholder="Ej: Juan Pérez" maxlength="60">
+        <span class="field-error" id="errName">Por favor ingresá tu nombre.</span>
+      </div>
+      <div class="field-group">
+        <label>Teléfono *</label>
+        <input type="tel" id="clientPhone" placeholder="Ej: 3815123456" maxlength="20">
+        <span class="field-error" id="errPhone">Por favor ingresá tu teléfono.</span>
+      </div>
+      <div class="field-group">
+        <label>Dirección de entrega *</label>
+        <textarea id="clientAddress" rows="2" placeholder="Ej: San Martín 456, B° Centro"></textarea>
+        <span class="field-error" id="errAddress">Por favor ingresá tu dirección.</span>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-send-btn" onclick="sendWhatsapp()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+        CONFIRMAR Y ENVIAR
+      </button>
+      <button class="modal-cancel-btn" onclick="closeModal()">Volver al pedido</button>
+    </div>
+  </div>
+</div>
 
 <!-- WP FLOTANTE -->
 <a class="wp-float" href="https://wa.me/543815549874?text=Hola+BRICA%21+Quisiera+hacer+una+consulta." target="_blank" title="Chateá con nosotros">
@@ -889,18 +1049,7 @@ function updateCartUI() {
   });
   cartItemsEl.innerHTML = html;
 
-  // WhatsApp link – unit-aware
-  const lines = items.map((item) => {
-    const {product:p, qty, unit} = item;
-    const isCaja = unit === 'caja';
-    const desc = isCaja
-      ? `• ${p.name} – ${qty} caja${qty>1?'s':''} (~${qty*CAJA_KG}kg) = ${formatPrice(itemTotal(item))}`
-      : `• ${p.name} – ${qty} kg = ${formatPrice(itemTotal(item))}`;
-    return desc;
-  }).join('%0A');
-  const totalLine = `%0A*TOTAL ESTIMADO: ${formatPrice(total)}*%0A_(Puede variar según peso real en entrega)_`;
-  const msg = `Hola BRICA! Quiero hacer el siguiente pedido:%0A%0A${lines}${totalLine}%0A%0APor favor confirmen disponibilidad. Gracias!`;
-  document.getElementById('whatsappLink').href = `https://wa.me/543815549874?text=${msg}`;
+  // WhatsApp se genera en sendWhatsapp() con datos del cliente
 }
 
 function clearCart() {
@@ -942,6 +1091,51 @@ function showToast(msg) {
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+
+function openModal() {
+  document.getElementById('clientModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('clientModal').classList.remove('open');
+  // clear errors
+  ['Name','Phone','Address'].forEach(f => {
+    document.getElementById('client'+f).classList.remove('error');
+    document.getElementById('err'+f).classList.remove('visible');
+  });
+}
+
+function sendWhatsapp() {
+  const name    = document.getElementById('clientName').value.trim();
+  const phone   = document.getElementById('clientPhone').value.trim();
+  const address = document.getElementById('clientAddress').value.trim();
+
+  let valid = true;
+  if (!name)    { document.getElementById('clientName').classList.add('error');    document.getElementById('errName').classList.add('visible');    valid=false; } else { document.getElementById('clientName').classList.remove('error');    document.getElementById('errName').classList.remove('visible'); }
+  if (!phone)   { document.getElementById('clientPhone').classList.add('error');   document.getElementById('errPhone').classList.add('visible');   valid=false; } else { document.getElementById('clientPhone').classList.remove('error');   document.getElementById('errPhone').classList.remove('visible'); }
+  if (!address) { document.getElementById('clientAddress').classList.add('error'); document.getElementById('errAddress').classList.add('visible'); valid=false; } else { document.getElementById('clientAddress').classList.remove('error'); document.getElementById('errAddress').classList.remove('visible'); }
+
+  if (!valid) return;
+
+  const items = Object.values(cart);
+  const total = items.reduce((s,i)=>s+itemTotal(i), 0);
+
+  const lines = items.map((item) => {
+    const {product:p, qty, unit} = item;
+    const isCaja = unit === 'caja';
+    return isCaja
+      ? `• ${p.name} – ${qty} caja${qty>1?'s':''} (~${qty*CAJA_KG}kg) = ${formatPrice(itemTotal(item))}`
+      : `• ${p.name} – ${qty} kg = ${formatPrice(itemTotal(item))}`;
+  }).join('%0A');
+
+  const totalLine = `%0A*TOTAL ESTIMADO: ${formatPrice(total)}*%0A_(Puede variar según peso real en entrega)_`;
+  const clientInfo = `%0A%0A👤 *Datos del cliente*%0ANombre: ${encodeURIComponent(name)}%0ATeléfono: ${encodeURIComponent(phone)}%0ADirección: ${encodeURIComponent(address)}`;
+  const msg = `Hola BRICA! Quiero hacer el siguiente pedido:%0A%0A${lines}${totalLine}${clientInfo}%0A%0AGracias!`;
+
+  window.open(`https://wa.me/543815549874?text=${msg}`, '_blank');
+  closeModal();
 }
 
 // INIT
