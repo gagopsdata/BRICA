@@ -507,6 +507,34 @@
   }
 
 
+
+  /* SEGMENTO */
+  .segment-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+  }
+  .seg-btn {
+    padding: 0.5rem 0.4rem;
+    border: 1.5px solid var(--borde);
+    border-radius: 6px;
+    background: white;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--cafe);
+    cursor: pointer;
+    transition: all .15s;
+    text-align: center;
+  }
+  .seg-btn:hover { border-color: var(--rojo); color: var(--rojo); }
+  .seg-btn.selected {
+    background: var(--cafe);
+    border-color: var(--cafe);
+    color: white;
+  }
+  .seg-other { grid-column: span 2; }
+
   /* MODAL DATOS CLIENTE */
   .modal-overlay {
     display: none;
@@ -756,6 +784,28 @@
     </div>
     <div class="modal-body">
       <p>Completá tus datos para que BRICA pueda coordinar la entrega.</p>
+
+      <div class="field-group">
+        <label>Tipo de cliente *</label>
+        <div class="segment-grid" id="segmentGrid">
+          <button type="button" class="seg-btn" onclick="selectSegment('Carnicería')">🥩 Carnicería</button>
+          <button type="button" class="seg-btn" onclick="selectSegment('Sanguchería')">🥪 Sanguchería</button>
+          <button type="button" class="seg-btn" onclick="selectSegment('Particular')">👤 Particular</button>
+          <button type="button" class="seg-btn" onclick="selectSegment('Pizzería')">🍕 Pizzería</button>
+          <button type="button" class="seg-btn" onclick="selectSegment('Hamburguesería')">🍔 Hamburguesería</button>
+          <button type="button" class="seg-btn seg-other" onclick="selectSegment('Otro')">✏️ Otro</button>
+        </div>
+        <input type="text" id="segmentOtherInput" placeholder="Especificá el tipo de negocio..." maxlength="60"
+               style="display:none;margin-top:0.4rem;">
+        <span class="field-error" id="errSegment">Por favor seleccioná el tipo de cliente.</span>
+      </div>
+
+      <div class="field-group" id="localNameGroup" style="display:none">
+        <label>Nombre del local *</label>
+        <input type="text" id="clientLocal" placeholder="Ej: Carnicería Don Pedro" maxlength="60">
+        <span class="field-error" id="errLocal">Por favor ingresá el nombre del local.</span>
+      </div>
+
       <div class="field-group">
         <label>Nombre completo *</label>
         <input type="text" id="clientName" placeholder="Ej: Juan Pérez" maxlength="60">
@@ -1094,16 +1144,39 @@ function showToast(msg) {
 }
 
 
+let selectedSegment = '';
+
+function selectSegment(seg) {
+  selectedSegment = seg;
+  // highlight
+  document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('selected'));
+  event.target.closest('.seg-btn').classList.add('selected');
+  // mostrar/ocultar "otro"
+  const otherInput = document.getElementById('segmentOtherInput');
+  otherInput.style.display = seg === 'Otro' ? 'block' : 'none';
+  if (seg !== 'Otro') otherInput.value = '';
+  // mostrar/ocultar nombre del local (oculto solo para Particular)
+  const localGroup = document.getElementById('localNameGroup');
+  localGroup.style.display = seg === 'Particular' ? 'none' : 'block';
+  document.getElementById('errSegment').classList.remove('visible');
+}
+
 function openModal() {
   document.getElementById('clientModal').classList.add('open');
 }
 
 function closeModal() {
   document.getElementById('clientModal').classList.remove('open');
-  // clear errors
-  ['Name','Phone','Address'].forEach(f => {
-    document.getElementById('client'+f).classList.remove('error');
-    document.getElementById('err'+f).classList.remove('visible');
+  selectedSegment = '';
+  document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('segmentOtherInput').style.display = 'none';
+  document.getElementById('segmentOtherInput').value = '';
+  document.getElementById('localNameGroup').style.display = 'none';
+  ['Name','Phone','Address','Segment','Local'].forEach(f => {
+    const el = document.getElementById('client'+f);
+    if (el) el.classList.remove('error');
+    const er = document.getElementById('err'+f);
+    if (er) er.classList.remove('visible');
   });
 }
 
@@ -1111,8 +1184,24 @@ function sendWhatsapp() {
   const name    = document.getElementById('clientName').value.trim();
   const phone   = document.getElementById('clientPhone').value.trim();
   const address = document.getElementById('clientAddress').value.trim();
+  const localEl = document.getElementById('clientLocal');
+  const localName = localEl ? localEl.value.trim() : '';
+  const otherSeg = document.getElementById('segmentOtherInput').value.trim();
+  const finalSeg = selectedSegment === 'Otro' ? (otherSeg || 'Otro') : selectedSegment;
+  const showLocal = selectedSegment && selectedSegment !== 'Particular';
 
   let valid = true;
+
+  // Validar segmento
+  if (!selectedSegment) {
+    document.getElementById('errSegment').classList.add('visible'); valid = false;
+  } else { document.getElementById('errSegment').classList.remove('visible'); }
+
+  // Validar nombre del local (solo si no es Particular)
+  if (showLocal && !localName) {
+    localEl.classList.add('error'); document.getElementById('errLocal').classList.add('visible'); valid = false;
+  } else if (localEl) { localEl.classList.remove('error'); document.getElementById('errLocal').classList.remove('visible'); }
+
   if (!name)    { document.getElementById('clientName').classList.add('error');    document.getElementById('errName').classList.add('visible');    valid=false; } else { document.getElementById('clientName').classList.remove('error');    document.getElementById('errName').classList.remove('visible'); }
   if (!phone)   { document.getElementById('clientPhone').classList.add('error');   document.getElementById('errPhone').classList.add('visible');   valid=false; } else { document.getElementById('clientPhone').classList.remove('error');   document.getElementById('errPhone').classList.remove('visible'); }
   if (!address) { document.getElementById('clientAddress').classList.add('error'); document.getElementById('errAddress').classList.add('visible'); valid=false; } else { document.getElementById('clientAddress').classList.remove('error'); document.getElementById('errAddress').classList.remove('visible'); }
@@ -1131,7 +1220,8 @@ function sendWhatsapp() {
   }).join('%0A');
 
   const totalLine = `%0A*TOTAL ESTIMADO: ${formatPrice(total)}*%0A_(Puede variar según peso real en entrega)_`;
-  const clientInfo = `%0A%0A👤 *Datos del cliente*%0ANombre: ${encodeURIComponent(name)}%0ATeléfono: ${encodeURIComponent(phone)}%0ADirección: ${encodeURIComponent(address)}`;
+  const localLine = showLocal ? `%0ALocal: ${encodeURIComponent(localName)}` : '';
+  const clientInfo = `%0A%0A👤 *Datos del cliente*%0ATipo: ${encodeURIComponent(finalSeg)}${localLine}%0ANombre: ${encodeURIComponent(name)}%0ATeléfono: ${encodeURIComponent(phone)}%0ADirección: ${encodeURIComponent(address)}`;
   const msg = `Hola BRICA! Quiero hacer el siguiente pedido:%0A%0A${lines}${totalLine}${clientInfo}%0A%0AGracias!`;
 
   window.open(`https://wa.me/543815549874?text=${msg}`, '_blank');
