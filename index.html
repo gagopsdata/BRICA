@@ -902,27 +902,6 @@
       <p>Completá tus datos para que BRICA pueda coordinar la entrega.</p>
 
       <div class="field-group">
-        <label>Tipo de cliente *</label>
-        <div class="segment-grid" id="segmentGrid">
-          <button type="button" class="seg-btn" onclick="selectSegment('Carnicería')">🥩 Carnicería</button>
-          <button type="button" class="seg-btn" onclick="selectSegment('Sanguchería')">🥪 Sanguchería</button>
-          <button type="button" class="seg-btn" onclick="selectSegment('Particular')">👤 Particular</button>
-          <button type="button" class="seg-btn" onclick="selectSegment('Pizzería')">🍕 Pizzería</button>
-          <button type="button" class="seg-btn" onclick="selectSegment('Hamburguesería')">🍔 Hamburguesería</button>
-          <button type="button" class="seg-btn seg-other" onclick="selectSegment('Otro')">✏️ Otro</button>
-        </div>
-        <input type="text" id="segmentOtherInput" placeholder="Especificá el tipo de negocio..." maxlength="60"
-               style="display:none;margin-top:0.4rem;">
-        <span class="field-error" id="errSegment">Por favor seleccioná el tipo de cliente.</span>
-      </div>
-
-      <div class="field-group" id="localNameGroup" style="display:none">
-        <label>Nombre del local *</label>
-        <input type="text" id="clientLocal" placeholder="Ej: Carnicería Don Pedro" maxlength="60">
-        <span class="field-error" id="errLocal">Por favor ingresá el nombre del local.</span>
-      </div>
-
-      <div class="field-group">
         <label>Nombre completo *</label>
         <input type="text" id="clientName" placeholder="Ej: Juan Pérez" maxlength="60">
         <span class="field-error" id="errName">Por favor ingresá tu nombre.</span>
@@ -936,6 +915,32 @@
         <label>Dirección de entrega *</label>
         <textarea id="clientAddress" rows="2" placeholder="Ej: San Martín 456, B° Centro"></textarea>
         <span class="field-error" id="errAddress">Por favor ingresá tu dirección.</span>
+      </div>
+      <div class="field-group">
+        <label>Localidad *</label>
+        <input type="text" id="clientLocality" placeholder="Ej: Tucumán Capital" maxlength="80">
+        <span class="field-error" id="errLocality">Por favor ingresá tu localidad.</span>
+      </div>
+
+      <div class="field-group">
+        <label>Tipo de cliente *</label>
+        <div class="segment-grid" id="segmentGrid">
+          <button type="button" class="seg-btn" onclick="selectSegment('Particular')">👤 Particular</button>
+          <button type="button" class="seg-btn" onclick="selectSegment('Carnicería')">🥩 Carnicería</button>
+          <button type="button" class="seg-btn" onclick="selectSegment('Sanguchería')">🥪 Sanguchería</button>
+          <button type="button" class="seg-btn" onclick="selectSegment('Hamburguesería')">🍔 Hamburguesería</button>
+          <button type="button" class="seg-btn" onclick="selectSegment('Pizzería')">🍕 Pizzería</button>
+          <button type="button" class="seg-btn seg-other" onclick="selectSegment('Otro')">✏️ Otro</button>
+        </div>
+        <input type="text" id="segmentOtherInput" placeholder="Especificá el tipo de negocio..." maxlength="60"
+               style="display:none;margin-top:0.4rem;">
+        <span class="field-error" id="errSegment">Por favor seleccioná el tipo de cliente.</span>
+      </div>
+
+      <div class="field-group" id="localNameGroup" style="display:none">
+        <label>Nombre del local *</label>
+        <input type="text" id="clientLocal" placeholder="Ej: Carnicería Don Pedro" maxlength="60">
+        <span class="field-error" id="errLocal">Por favor ingresá el nombre del local.</span>
       </div>
     </div>
     <div class="modal-footer">
@@ -1285,7 +1290,7 @@ function closeConfirm() {
   updateCartUI();
   toggleCart();
   // limpiar campos del modal
-  ['clientName','clientPhone','clientAddress','clientLocal','segmentOtherInput'].forEach(id => {
+  ['clientName','clientPhone','clientAddress','clientLocality','clientLocal','segmentOtherInput'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -1349,9 +1354,11 @@ function sendWhatsapp() {
     localEl.classList.add('error'); document.getElementById('errLocal').classList.add('visible'); valid = false;
   } else if (localEl) { localEl.classList.remove('error'); document.getElementById('errLocal').classList.remove('visible'); }
 
-  if (!name)    { document.getElementById('clientName').classList.add('error');    document.getElementById('errName').classList.add('visible');    valid=false; } else { document.getElementById('clientName').classList.remove('error');    document.getElementById('errName').classList.remove('visible'); }
-  if (!phone)   { document.getElementById('clientPhone').classList.add('error');   document.getElementById('errPhone').classList.add('visible');   valid=false; } else { document.getElementById('clientPhone').classList.remove('error');   document.getElementById('errPhone').classList.remove('visible'); }
-  if (!address) { document.getElementById('clientAddress').classList.add('error'); document.getElementById('errAddress').classList.add('visible'); valid=false; } else { document.getElementById('clientAddress').classList.remove('error'); document.getElementById('errAddress').classList.remove('visible'); }
+  const locality = document.getElementById('clientLocality').value.trim();
+  if (!name)     { document.getElementById('clientName').classList.add('error');     document.getElementById('errName').classList.add('visible');     valid=false; } else { document.getElementById('clientName').classList.remove('error');     document.getElementById('errName').classList.remove('visible'); }
+  if (!phone)    { document.getElementById('clientPhone').classList.add('error');    document.getElementById('errPhone').classList.add('visible');    valid=false; } else { document.getElementById('clientPhone').classList.remove('error');    document.getElementById('errPhone').classList.remove('visible'); }
+  if (!address)  { document.getElementById('clientAddress').classList.add('error');  document.getElementById('errAddress').classList.add('visible');  valid=false; } else { document.getElementById('clientAddress').classList.remove('error');  document.getElementById('errAddress').classList.remove('visible'); }
+  if (!locality) { document.getElementById('clientLocality').classList.add('error'); document.getElementById('errLocality').classList.add('visible'); valid=false; } else { document.getElementById('clientLocality').classList.remove('error'); document.getElementById('errLocality').classList.remove('visible'); }
 
   if (!valid) return;
 
@@ -1368,7 +1375,7 @@ function sendWhatsapp() {
 
   const totalLine = `%0A*TOTAL ESTIMADO: ${formatPrice(total)}*%0A_(Puede variar según peso real en entrega)_`;
   const localLine = showLocal ? `%0ALocal: ${encodeURIComponent(localName)}` : '';
-  const clientInfo = `%0A%0A👤 *Datos del cliente*%0ATipo: ${encodeURIComponent(finalSeg)}${localLine}%0ANombre: ${encodeURIComponent(name)}%0ATeléfono: ${encodeURIComponent(phone)}%0ADirección: ${encodeURIComponent(address)}`;
+  const clientInfo = `%0A%0A👤 *Datos del cliente*%0ATipo: ${encodeURIComponent(finalSeg)}${localLine}%0ANombre: ${encodeURIComponent(name)}%0ATeléfono: ${encodeURIComponent(phone)}%0ADirección: ${encodeURIComponent(address)}%0ALocalidad: ${encodeURIComponent(locality)}`;
 
   // Generar número de pedido
   const orderNum = generateOrderNumber();
